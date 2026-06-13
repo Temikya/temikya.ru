@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        TemikMovie
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+</head>
+
+<body>
+
+    <header class="header">
+
+        <h1 class="logo">
+            TEMIKMOVIE
+        </h1>
+
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="🔍 Поиск фильма..."
+        >
+
+    </header>
+
+
+    <section class="hero">
+
+        <div class="hero-overlay">
+
+            <h2>
+                Найди фильм
+                на любой вечер
+            </h2>
+
+            <p>
+                Подбор фильмов
+                с ИИ помощником
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <section class="movies-section">
+
+        <h2>
+            Популярные фильмы
+        </h2>
+
+
+        <div class="filters">
+
+            <select id="genreFilter">
+                <option value="">
+                    Все жанры
+                </option>
+            </select>
+
+
+            <select id="ratingFilter">
+
+                <option value="">
+                    Любой рейтинг
+                </option>
+
+                <option value="9">
+                    9+
+                </option>
+
+                <option value="8">
+                    8+
+                </option>
+
+                <option value="7">
+                    7+
+                </option>
+
+                <option value="6">
+                    6+
+                </option>
+
+            </select>
+
+
+            <select id="yearFilter">
+
+                <option value="">
+                    Любой год
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div
+            id="moviesContainer"
+            class="movies-grid"
+        ></div>
+
+    </section>
+
+
+
+    <section class="ai-section">
+
+        <h2>
+            🤖 ИИ помощник
+        </h2>
+
+        <div class="ai-box">
+
+            <input
+                type="text"
+                id="aiInput"
+                placeholder="Например: комедия на вечер"
+            >
+
+            <button id="aiBtn">
+                Подобрать
+            </button>
+
+        </div>
+
+        <div id="aiResponse"></div>
+
+    </section>
+
+    <script src="app.js"></script>
+
+<script
+src="https://browser.sentry-cdn.com/8.28.0/bundle.min.js">
+</script>
+
+<script>
+Sentry.init({
+dsn:
+"https://657d9bcfeb4861e07477c32f84f9c880@o4511219758661632.ingest.de.sentry.io/4511514612203600",
+tracesSampleRate:
+1.0,
+});
+</script>
+
+</body>
+</html>
