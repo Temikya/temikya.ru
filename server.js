@@ -20,13 +20,15 @@ const cors = require("cors");
 app.use(cors({
     origin: [
         "http://temikya.ru",
+        "http://temikya.ru/",
         "https://temikya.ru",
         "http://www.temikya.ru",
         "https://www.temikya.ru"
     ],
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true
+   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+   allowedHeaders: ["Content-Type", "Authorization"]
 }));
+app.options("*", cors());
 
 app.use(express.json());
 
