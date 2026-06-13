@@ -1,42 +1,21 @@
-const container =
-    document.getElementById(
-        "moviesContainer"
-    );
+// ======================
+// 🔥 1. BACKEND URL (ЗДЕСЬ МЕНЯЕШЬ СВОЙ RAILWAY)
+// ======================
+const API_URL = "https://temikyaru-production.up.railway.app";
 
-const searchInput =
-    document.getElementById(
-        "searchInput"
-    );
 
-const genreFilter =
-    document.getElementById(
-        "genreFilter"
-    );
+// ======================
+// DOM ELEMENTS
+// ======================
+const container = document.getElementById("moviesContainer");
+const searchInput = document.getElementById("searchInput");
+const genreFilter = document.getElementById("genreFilter");
+const ratingFilter = document.getElementById("ratingFilter");
+const yearFilter = document.getElementById("yearFilter");
 
-const ratingFilter =
-    document.getElementById(
-        "ratingFilter"
-    );
-
-const yearFilter =
-    document.getElementById(
-        "yearFilter"
-    );
-
-const aiBtn =
-    document.getElementById(
-        "aiBtn"
-    );
-
-const aiInput =
-    document.getElementById(
-        "aiInput"
-    );
-
-const aiResponse =
-    document.getElementById(
-        "aiResponse"
-    );
+const aiBtn = document.getElementById("aiBtn");
+const aiInput = document.getElementById("aiInput");
+const aiResponse = document.getElementById("aiResponse");
 
 let allMovies = [];
 
@@ -44,36 +23,18 @@ let allMovies = [];
 // ======================
 // LOAD MOVIES
 // ======================
-
 async function loadMovies() {
-
     try {
+        const response = await fetch(`${API_URL}/api/movies`);
+        const movies = await response.json();
 
-        const response =
-            await fetch(
-                "/api/movies"
-            );
+        allMovies = movies;
 
-        const movies =
-            await response.json();
-
-        allMovies =
-            movies;
-
-        fillFilters(
-            movies
-        );
-
-        renderMovies(
-            movies
-        );
+        fillFilters(movies);
+        renderMovies(movies);
 
     } catch (error) {
-
-        console.error(
-            "Ошибка загрузки:",
-            error
-        );
+        console.error("Ошибка загрузки:", error);
     }
 }
 
@@ -81,467 +42,238 @@ async function loadMovies() {
 // ======================
 // RENDER MOVIES
 // ======================
+function renderMovies(movies) {
+    container.innerHTML = "";
 
-function renderMovies(
-    movies
-) {
+    movies.forEach(movie => {
 
-    container.innerHTML =
-        "";
+        const poster =
+            movie.posterURL ||
+            "https://placehold.co/300x450?text=No+Poster";
 
-    movies.forEach(
-        movie => {
+        const description =
+            movie.description
+                ? movie.description.slice(0, 100) + "..."
+                : "Описание отсутствует";
 
-            const poster =
-                movie.posterURL ||
-                "https://placehold.co/300x450?text=No+Poster";
-
-            const description =
-                movie.description
-                    ? movie.description
-                        .slice(0, 100)
-                        + "..."
-                    : "Описание отсутствует";
-
-            const card =
-`
+        const card = `
 <div class="movie-card">
 
     <img
         src="${poster}"
-        onerror="
-this.src='https://placehold.co/300x450?text=No+Poster'
-        "
+        onerror="this.src='https://placehold.co/300x450?text=No+Poster'"
     >
 
     <div class="movie-info">
 
-        <h3>
-            ${movie.title}
-        </h3>
+        <h3>${movie.title}</h3>
 
-        <p class="movie-year">
-            📅 ${movie.year || "—"}
-        </p>
+        <p class="movie-year">📅 ${movie.year || "—"}</p>
 
-        <p class="movie-rating">
-            ⭐ ${movie.rating || "—"}
-        </p>
+        <p class="movie-rating">⭐ ${movie.rating || "—"}</p>
 
-        <p class="movie-description">
-            ${description}
-        </p>
+        <p class="movie-description">${description}</p>
 
     </div>
 
 </div>
 `;
 
-            const wrapper =
-                document.createElement(
-                    "div"
-                );
+        const wrapper = document.createElement("div");
+        wrapper.innerHTML = card;
 
-            wrapper.innerHTML =
-                card;
+        const cardElement = wrapper.firstElementChild;
 
-            const cardElement =
-                wrapper.firstElementChild;
+        cardElement.addEventListener("click", () => {
+            openMovie(movie);
+        });
 
-            // КЛИК ПО КАРТОЧКЕ
-            cardElement.addEventListener(
-                "click",
-                () => {
-
-                    openMovie(
-                        movie
-                    );
-                }
-            );
-
-            container.appendChild(
-                cardElement
-            );
-        }
-    );
+        container.appendChild(cardElement);
+    });
 }
 
 
 // ======================
 // MOVIE MODAL
 // ======================
+function openMovie(movie) {
 
-function openMovie(
-    movie
-) {
+    const modal = document.createElement("div");
+    modal.className = "movie-modal";
 
-    const modal =
-        document.createElement(
-            "div"
-        );
-
-    modal.className =
-        "movie-modal";
-
-    modal.innerHTML =
-`
+    modal.innerHTML = `
 <div class="movie-modal-content">
 
-    <span class="close-modal">
-        ✖
-    </span>
+    <span class="close-modal">✖</span>
 
     <img
         src="${movie.posterURL}"
-        onerror="
-this.src='https://placehold.co/300x450?text=No+Poster'
-        "
+        onerror="this.src='https://placehold.co/300x450?text=No+Poster'"
     >
 
     <div class="movie-modal-info">
 
-        <h2>
-            ${movie.title}
-        </h2>
+        <h2>${movie.title}</h2>
 
-        <p>
-            ⭐ Рейтинг:
-            ${movie.rating || "—"}
-        </p>
+        <p>⭐ Рейтинг: ${movie.rating || "—"}</p>
 
-        <p>
-            📅 Год:
-            ${movie.year || "—"}
-        </p>
+        <p>📅 Год: ${movie.year || "—"}</p>
 
-        <p>
-            🎭 Жанр:
-            ${movie.genre || "Не указан"}
-        </p>
+        <p>🎭 Жанр: ${movie.genre || "Не указан"}</p>
 
         <br>
 
-        <p>
-            ${movie.description ||
-            "Описание отсутствует"}
-        </p>
+        <p>${movie.description || "Описание отсутствует"}</p>
 
     </div>
 
 </div>
 `;
 
-    document.body.appendChild(
-        modal
-    );
+    document.body.appendChild(modal);
 
-    modal
-        .querySelector(
-            ".close-modal"
-        )
-        .addEventListener(
-            "click",
-            () => {
+    modal.querySelector(".close-modal").addEventListener("click", () => {
+        modal.remove();
+    });
 
-                modal.remove();
-            }
-        );
-
-    modal.addEventListener(
-        "click",
-        (e) => {
-
-            if (
-                e.target === modal
-            ) {
-
-                modal.remove();
-            }
+    modal.addEventListener("click", (e) => {
+        if (e.target === modal) {
+            modal.remove();
         }
-    );
+    });
 }
 
 
 // ======================
 // FILTERS
 // ======================
+function fillFilters(movies) {
 
-function fillFilters(
-    movies
-) {
+    genreFilter.innerHTML = `<option value="">Все жанры</option>`;
+    yearFilter.innerHTML = `<option value="">Все годы</option>`;
 
-    genreFilter.innerHTML =
-        `<option value="">
-Все жанры
-</option>`;
+    const genres = new Set();
+    const years = new Set();
 
-    yearFilter.innerHTML =
-        `<option value="">
-Все годы
-</option>`;
+    movies.forEach(movie => {
 
-    const genres =
-        new Set();
-
-    const years =
-        new Set();
-
-    movies.forEach(
-        movie => {
-
-            if (
-                movie.genre
-            ) {
-
-                movie.genre
-                    .split(",")
-
-                    .forEach(
-                        g => genres.add(
-                            g.trim()
-                        )
-                    );
-            }
-
-            if (
-                movie.year
-            ) {
-
-                years.add(
-                    movie.year
-                );
-            }
+        if (movie.genre) {
+            movie.genre.split(",").forEach(g => genres.add(g.trim()));
         }
-    );
 
-    [...genres]
-        .sort()
+        if (movie.year) {
+            years.add(movie.year);
+        }
+    });
 
-        .forEach(g => {
+    [...genres].sort().forEach(g => {
+        genreFilter.innerHTML += `<option value="${g}">${g}</option>`;
+    });
 
-            genreFilter.innerHTML +=
-`
-<option value="${g}">
-${g}
-</option>
-`;
-        });
-
-    [...years]
-        .sort((a, b) => b - a)
-
-        .forEach(y => {
-
-            yearFilter.innerHTML +=
-`
-<option value="${y}">
-${y}
-</option>
-`;
-        });
+    [...years].sort((a, b) => b - a).forEach(y => {
+        yearFilter.innerHTML += `<option value="${y}">${y}</option>`;
+    });
 }
 
 
+// ======================
+// APPLY FILTERS
+// ======================
 function applyFilters() {
 
-    const text =
-        searchInput.value
-            .toLowerCase();
+    const text = searchInput.value.toLowerCase();
+    const genre = genreFilter.value;
+    const rating = ratingFilter.value;
+    const year = yearFilter.value;
 
-    const genre =
-        genreFilter.value;
+    const filtered = allMovies.filter(movie => {
 
-    const rating =
-        ratingFilter.value;
+        const search =
+            movie.title?.toLowerCase().includes(text);
 
-    const year =
-        yearFilter.value;
+        const genreOk =
+            !genre || movie.genre?.includes(genre);
 
-    const filtered =
-        allMovies.filter(
-            movie => {
+        const ratingOk =
+            !rating || parseFloat(movie.rating || 0) >= rating;
 
-                const search =
-                    movie.title
-                        ?.toLowerCase()
-                        .includes(
-                            text
-                        );
+        const yearOk =
+            !year || String(movie.year) === year;
 
-                const genreOk =
-                    !genre ||
-                    movie.genre?.includes(
-                        genre
-                    );
+        return search && genreOk && ratingOk && yearOk;
+    });
 
-                const ratingOk =
-                    !rating ||
-                    parseFloat(
-                        movie.rating || 0
-                    ) >= rating;
-
-                const yearOk =
-                    !year ||
-                    String(
-                        movie.year
-                    ) === year;
-
-                return (
-                    search &&
-                    genreOk &&
-                    ratingOk &&
-                    yearOk
-                );
-            }
-        );
-
-    renderMovies(
-        filtered
-    );
+    renderMovies(filtered);
 }
 
 
-searchInput.addEventListener(
-    "input",
-    applyFilters
-);
-
-genreFilter.addEventListener(
-    "change",
-    applyFilters
-);
-
-ratingFilter.addEventListener(
-    "change",
-    applyFilters
-);
-
-yearFilter.addEventListener(
-    "change",
-    applyFilters
-);
+// ======================
+// EVENTS
+// ======================
+searchInput.addEventListener("input", applyFilters);
+genreFilter.addEventListener("change", applyFilters);
+ratingFilter.addEventListener("change", applyFilters);
+yearFilter.addEventListener("change", applyFilters);
 
 
 // ======================
 // AI
 // ======================
+aiBtn.addEventListener("click", async () => {
 
-aiBtn.addEventListener(
-    "click",
+    const prompt = aiInput.value.trim();
+    if (!prompt) return;
 
-    async () => {
-
-        const prompt =
-            aiInput.value.trim();
-
-        if (!prompt) {
-
-            return;
-        }
-
-        aiResponse.innerHTML =
-`
-<div class="ai-loading">
-🤖 ИИ подбирает фильмы...
-</div>
+    aiResponse.innerHTML = `
+<div class="ai-loading">🤖 ИИ подбирает фильмы...</div>
 `;
 
-        try {
+    try {
+        const response = await fetch(`${API_URL}/api/ai`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                prompt,
+                movies: allMovies
+            })
+        });
 
-            const response =
-                await fetch(
-                    "/api/ai",
-                    {
-                        method:
-                            "POST",
+        const data = await response.json();
 
-                        headers: {
-                            "Content-Type":
-                                "application/json"
-                        },
-
-                        body:
-                            JSON.stringify({
-                                prompt,
-                                movies:
-                                    allMovies
-                            })
-                    }
-                );
-
-            const data =
-                await response.json();
-
-            let html =
-`
-<h3>
-🤖 Рекомендации
-</h3>
-
-<p>
-${data.text || ""}
-</p>
-
+        let html = `
+<h3>🤖 Рекомендации</h3>
+<p>${data.text || ""}</p>
 <div class="ai-movies">
 `;
 
-            data.movies?.forEach(
-                movie => {
-
-                    html +=
-`
+        data.movies?.forEach(movie => {
+            html += `
 <div class="ai-card">
 
-    <img
-        src="${movie.posterURL}"
-    >
+    <img src="${movie.posterURL}">
 
     <div>
-
-        <h4>
-            ${movie.title}
-        </h4>
-
-        <p>
-            ⭐ ${movie.rating}
-        </p>
-
-        <p>
-            📅 ${movie.year}
-        </p>
-
-        <p>
-            ${movie.reason}
-        </p>
-
+        <h4>${movie.title}</h4>
+        <p>⭐ ${movie.rating}</p>
+        <p>📅 ${movie.year}</p>
+        <p>${movie.reason}</p>
     </div>
 
 </div>
 `;
-                }
-            );
+        });
 
-            html +=
-`
-</div>
-`;
+        html += `</div>`;
+        aiResponse.innerHTML = html;
 
-            aiResponse.innerHTML =
-                html;
-
-        } catch (error) {
-
-            console.error(
-                error
-            );
-
-            aiResponse.innerHTML =
-                "Ошибка AI 😥";
-        }
+    } catch (error) {
+        console.error(error);
+        aiResponse.innerHTML = "Ошибка AI 😥";
     }
-);
+});
 
 
 // ======================
-
 loadMovies();
