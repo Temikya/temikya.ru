@@ -6,9 +6,7 @@ const path = require("path");
 const morgan = require("morgan");
 
 const moviesRoutes = require("./routes/movies");
-
-const aiRoutes =
-    require("./routes/ai");
+const aiRoutes = require("./routes/ai");
 
 const app = express();
 
@@ -58,7 +56,7 @@ app.use((req, res, next) => {
 
 app.use(
     "/api/movies",
-    movieRoutes
+    moviesRoutes
 );
 
 app.use(
@@ -137,3 +135,5 @@ app.listen(PORT, () => {
 🌍 http://localhost:${PORT}
     `);
 });
+
+
