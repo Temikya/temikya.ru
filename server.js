@@ -5,8 +5,7 @@ const cors = require("cors");
 const path = require("path");
 const morgan = require("morgan");
 
-const movieRoutes =
-    require("./routes/movies");
+const moviesRoutes = require("./routes/movies");
 
 const aiRoutes =
     require("./routes/ai");
